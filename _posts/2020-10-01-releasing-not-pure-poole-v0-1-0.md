@@ -1,6 +1,6 @@
 ---
 layout: post
-title: DDDDDDDDDDDReleasing Not Pure Poole v0.1.0
+title:  hello world
 author: Soengmou
 tags:
 - jekyll theme
