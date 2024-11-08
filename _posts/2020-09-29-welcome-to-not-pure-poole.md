@@ -2,7 +2,7 @@
 layout: post
 title: Welcome to Not Pure Poole
 date: 2024-11-08 23:18 +0800
-last_modified_at: 2024-11-08 01:08:25 +0800
+last_modified_at: 2024-11-09 01:08:25 +0800
 tags: [jekyll theme, jekyll, tutorial]
 toc:  true
 ---
