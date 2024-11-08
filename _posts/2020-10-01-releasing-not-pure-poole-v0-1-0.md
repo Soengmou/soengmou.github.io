@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Releasing Not Pure Poole v0.1.0
-author: Songzi Vong
+title: DDDDDDDDDDDReleasing Not Pure Poole v0.1.0
+author: Soengmou
 tags:
 - jekyll theme
 - jekyll
