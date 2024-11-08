@@ -4,10 +4,6 @@ title:  hello world
 author: Soengmou
 tags:
 - hello
-date: 2024-10-01 13:56 +0800
+date: 2024-11-08 21:31 +0800
 ---
-The Jekyll theme **Not Pure Poole** v0.1.0 was released!
-
-Not Pure Poole is a simple, beautiful, and powerful Jekyll theme for blogs. It is built on [Poole](https://github.com/poole/poole) and [Pure](https://purecss.io/).
-
-For more information about this theme, you can read the [README](https://github.com/vszhub/not-pure-poole/blob/master/README.md) file.
+Welcome to **other me**！
