@@ -3,9 +3,8 @@ layout: post
 title:  hello world
 author: Soengmou
 tags:
-- jekyll theme
-- jekyll
-date: 2020-10-01 13:56 +0800
+- hello
+date: 2024-10-01 13:56 +0800
 ---
 The Jekyll theme **Not Pure Poole** v0.1.0 was released!
 
