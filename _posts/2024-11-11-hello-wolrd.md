@@ -5,7 +5,7 @@ author: Soengmou
 tags:
 - hello
 date: 2024-11-11 09:51 +0800
-category:
+categories:
 - hello
 ---
 Welcome to **other me**！
