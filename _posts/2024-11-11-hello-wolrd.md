@@ -7,3 +7,4 @@ tags:
 date: 2024-11-08 21:31 +0800
 ---
 Welcome to **other me**！
+{: .message }
