@@ -19,7 +19,7 @@
         var velocityLayer = L.layerGroup().addTo(map);
 
         // 加载 JSON 数据
-        fetch('https://raw.githubusercontent.com/your-username/your-repo/main/velocity_data.json')
+        fetch('https://github.com/Soengmou/soengmou.github.io/blob/master/velocity_data.json')
         .then(response => response.json())
         .then(data => {
             data.forEach(d => {
