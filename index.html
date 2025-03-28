@@ -1,3 +1,68 @@
----
-layout: home
----
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>速度场可视化</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css" />
+</head>
+<body>
+    <div id="map" style="height: 600px;"></div>
+
+    <script>
+        // 初始化地图
+        var map = L.map('map').setView([30.0, 120.0], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // 读取并加载GeoJSON
+        fetch('velocity_field.json')
+        .then(response => response.json())
+        .then(data => {
+            L.geoJSON(data, {
+                onEachFeature: function (feature, layer) {
+                    layer.bindPopup(`速度: (${feature.properties.vx}, ${feature.properties.vy})`);
+                }
+            }).addTo(map);
+        });
+
+        // 添加框选工具
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+        var drawControl = new L.Control.Draw({
+            draw: {
+                polyline: false,
+                marker: false,
+                circle: false,
+                circlemarker: false
+            },
+            edit: {
+                featureGroup: drawnItems
+            }
+        });
+        map.addControl(drawControl);
+
+        // 处理框选后的数据
+        map.on(L.Draw.Event.CREATED, function (event) {
+            var layer = event.layer;
+            drawnItems.addLayer(layer);
+            
+            fetch('velocity_field.json')
+            .then(response => response.json())
+            .then(data => {
+                var selectedFeatures = data.features.filter(feature => {
+                    var point = L.latLng(feature.geometry.coordinates[1], feature.geometry.coordinates[0]);
+                    return layer.getBounds().contains(point);
+                });
+                console.log("选中的点:", selectedFeatures);
+                alert("选中了 " + selectedFeatures.length + " 个点");
+            });
+        });
+    </script>
+</body>
+</html>
+
