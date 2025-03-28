@@ -1,69 +1,70 @@
-
 <!DOCTYPE html>
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>速度场可视化</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 </head>
 <body>
-    <div id="map" style="height: 600px;"></div>
-
+    <div id="map" style="width: 100%; height: 600px;"></div>
     <script>
-        // 初始化地图
-        var map = L.map('map').setView([30.0, 120.0], 5);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
+        var map = L.map('map').setView([30.5, 120.5], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        // 读取并加载GeoJSON
-        fetch('velocity_field.json')
+        // 速度场矢量图层
+        var velocityLayer = L.layerGroup().addTo(map);
+
+        // 加载 JSON 数据
+        fetch('https://raw.githubusercontent.com/your-username/your-repo/main/velocity_data.json')
         .then(response => response.json())
         .then(data => {
-            L.geoJSON(data, {
-                onEachFeature: function (feature, layer) {
-                    layer.bindPopup(`速度: (${feature.properties.vx}, ${feature.properties.vy})`);
-                }
-            }).addTo(map);
+            data.forEach(d => {
+                var start = L.latLng(d.lat, d.lon);
+                var end = L.latLng(d.lat + d.vy * 0.1, d.lon + d.vx * 0.1);
+                var arrow = L.polyline([start, end], {color: 'blue'}).addTo(velocityLayer);
+            });
         });
 
         // 添加框选工具
-        var drawnItems = new L.FeatureGroup();
-        map.addLayer(drawnItems);
+        var drawnItems = new L.FeatureGroup().addTo(map);
         var drawControl = new L.Control.Draw({
             draw: {
-                polyline: false,
-                marker: false,
-                circle: false,
-                circlemarker: false
+                polyline: false, circle: false, marker: false, circlemarker: false,
+                rectangle: true, polygon: false
             },
-            edit: {
-                featureGroup: drawnItems
-            }
+            edit: { featureGroup: drawnItems }
         });
         map.addControl(drawControl);
 
-        // 处理框选后的数据
+        // 监听框选
         map.on(L.Draw.Event.CREATED, function (event) {
             var layer = event.layer;
+            drawnItems.clearLayers(); // 清除旧的选区
             drawnItems.addLayer(layer);
-            
-            fetch('velocity_field.json')
+
+            var bounds = layer.getBounds();
+            fetch('https://raw.githubusercontent.com/your-username/your-repo/main/velocity_data.json')
             .then(response => response.json())
             .then(data => {
-                var selectedFeatures = data.features.filter(feature => {
-                    var point = L.latLng(feature.geometry.coordinates[1], feature.geometry.coordinates[0]);
-                    return layer.getBounds().contains(point);
-                });
-                console.log("选中的点:", selectedFeatures);
-                alert("选中了 " + selectedFeatures.length + " 个点");
+                var selectedData = data.filter(d => 
+                    d.lat >= bounds.getSouth() && d.lat <= bounds.getNorth() &&
+                    d.lon >= bounds.getWest() && d.lon <= bounds.getEast()
+                );
+
+                console.log("选中的数据:", selectedData);
+                plotSelectedData(selectedData);
             });
         });
+
+        // 生成框选后速度场图
+        function plotSelectedData(selectedData) {
+            var imgSrc = "https://your-server.com/plot_velocity?data=" + encodeURIComponent(JSON.stringify(selectedData));
+            var imgPopup = L.popup().setLatLng([30.5, 120.5]).setContent('<img src="' + imgSrc + '" width="500">').openOn(map);
+        }
     </script>
 </body>
 </html>
-
